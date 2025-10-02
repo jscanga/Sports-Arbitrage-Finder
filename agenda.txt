@@ -1,0 +1,18 @@
+To do:
+show next upcoming exam on dashboard
+fix color organization and maybe spice things up
+make wipe data also wipe classes/schedule/todolist
+fix all typescript errors for upload
+
+Sections I want to add:
+Daily journal
+Degree planner
+
+CURRENT ERRORS:
+	Todolist
+		deleting a task you imported and reimporting doesn't readd it
+
+WEBSITE IDEAS
+
+CrowdSurge
+Geography Guessing Games
