@@ -23,16 +23,30 @@ interface OddsData {
   }[];
 }
 
+interface ArbOpportunity {
+  game: string;
+  sport: string;
+  commenceTime: string;
+  isLive: boolean;
+  homeBookmaker: string;
+  awayBookmaker: string;
+  homeOdds: number;
+  awayOdds: number;
+  homeProb: string;
+  awayProb: string;
+  arbPercent: string;
+  profit: string;
+}
+
 export default function ArbitrageFinder() {
   const [odds, setOdds] = useState<OddsData[]>([]);
-  const [arbOpportunities, setArbOpportunities] = useState<any[]>([]);
+  const [arbOpportunities, setArbOpportunities] = useState<ArbOpportunity[]>([]);
   const [debug, setDebug] = useState<string>('');
   const [filter, setFilter] = useState<'all' | 'live' | 'pregame'>('all');
   const [sortBy, setSortBy] = useState<'profit' | 'sport' | 'time'>('profit');
-  const [selectedArb, setSelectedArb] = useState<any>(null);
+  const [selectedArb, setSelectedArb] = useState<ArbOpportunity | null>(null);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [betAmount, setBetAmount] = useState('100');
-  const [sportFilter, setSportFilter] = useState<string>('all'); 
   const [scanType, setScanType] = useState<'all' | 'live' | 'pregame'>('all');
   const [apiKey, setApiKey] = useState<string>('');
   
@@ -45,7 +59,7 @@ export default function ArbitrageFinder() {
   }, []);
 
   // Calculate how much to bet on the other side
-  const calculateOtherSideBet = (betAmount: number, arb: any) => {
+  const calculateOtherSideBet = (betAmount: number, arb: ArbOpportunity) => {
     const homePayout = calculatePayout(betAmount, arb.homeOdds);
     const otherSideBet = homePayout / (arb.awayOdds > 0 ? (arb.awayOdds / 100) + 1 : (100 / Math.abs(arb.awayOdds)) + 1);
     return otherSideBet;
@@ -61,7 +75,7 @@ export default function ArbitrageFinder() {
   };
 
   // Calculate guaranteed payout (the lower of the two possible payouts)
-  const calculateGuaranteedPayout = (betAmount: number, arb: any) => {
+  const calculateGuaranteedPayout = (betAmount: number, arb: ArbOpportunity) => {
     const otherSideBet = calculateOtherSideBet(betAmount, arb);
     const homePayout = calculatePayout(betAmount, arb.homeOdds);
     const awayPayout = calculatePayout(otherSideBet, arb.awayOdds);
@@ -69,14 +83,14 @@ export default function ArbitrageFinder() {
   };
 
   // Calculate profit
-  const calculateProfit = (betAmount: number, arb: any) => {
+  const calculateProfit = (betAmount: number, arb: ArbOpportunity) => {
     const totalStake = betAmount + calculateOtherSideBet(betAmount, arb);
     const guaranteedPayout = calculateGuaranteedPayout(betAmount, arb);
     return guaranteedPayout - totalStake;
   };
 
   // Calculate ROI
-  const calculateROI = (betAmount: number, arb: any) => {
+  const calculateROI = (betAmount: number, arb: ArbOpportunity) => {
     const profit = calculateProfit(betAmount, arb);
     const totalStake = betAmount + calculateOtherSideBet(betAmount, arb);
     return (profit / totalStake) * 100;
@@ -134,9 +148,9 @@ const fetchOdds = async () => {
 console.log('Sports found:', [...new Set(data.map((game: OddsData) => game.sport_title))]);
     setDebug(`✅ Fetched ${data.length} ${scanType !== 'all' ? scanType : ''} games`);
     findArbitrage(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to fetch odds:', error);
-    setDebug(`❌ Error: ${error.message}`);
+    setDebug(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
 
@@ -160,11 +174,11 @@ console.log('Sports found:', [...new Set(data.map((game: OddsData) => game.sport
   };
 
 const findArbitrage = (oddsData: OddsData[]) => {
-  const opportunities = [];
+  const opportunities: ArbOpportunity[] = [];
   let gamesChecked = 0;
   let arbsFound = 0;
-  let sportsChecked = new Set();
-  let bookmakersChecked = new Set();
+  const sportsChecked = new Set();
+  const bookmakersChecked = new Set();
 
   for (const game of oddsData) {
     gamesChecked++;
@@ -368,7 +382,7 @@ const findArbitrage = (oddsData: OddsData[]) => {
               {/* SCAN TYPE FILTER */}
               <select 
                 value={scanType}
-                onChange={(e) => setScanType(e.target.value as any)}
+                onChange={(e) => setScanType(e.target.value as 'all' | 'live' | 'pregame')}
                 className="px-4 py-2 bg-neutral-800 border border-neutral-700 text-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               >
                 <option value="all">All Events</option>
@@ -407,10 +421,10 @@ const findArbitrage = (oddsData: OddsData[]) => {
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-400 mb-2">Display Filter</label>
               <div className="flex space-x-2">
-                {['all', 'live', 'pregame'].map((filterType) => (
+                {(['all', 'live', 'pregame'] as const).map((filterType) => (
                   <button
                     key={filterType}
-                    onClick={() => setFilter(filterType as any)}
+                    onClick={() => setFilter(filterType)}
                     className={`px-4 py-2 rounded-lg font-medium transition-all ${
                       filter === filterType
                         ? 'bg-emerald-700 text-white shadow-md'
@@ -428,7 +442,7 @@ const findArbitrage = (oddsData: OddsData[]) => {
               <label className="block text-sm font-medium text-gray-400 mb-2">Sort By</label>
               <select 
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as 'profit' | 'sport' | 'time')}
                 className="w-full px-4 py-2 bg-neutral-800 border border-neutral-700 text-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               >
                 <option value="profit">Highest Profit</option>
