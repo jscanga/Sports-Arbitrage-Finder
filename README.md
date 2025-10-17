@@ -8,6 +8,9 @@ This project allows users to connect their **Odds API** key, fetch real-time spo
 
 ---
 
+## Live Demo
+Check out the live version [on Vercel](https://sports-arbitrage-finder.vercel.app/dashboard)
+
 ## Screenshots
 
 **Dashboard Overview**  
