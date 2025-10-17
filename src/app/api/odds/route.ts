@@ -1,6 +1,38 @@
 // app/api/odds/route.ts
 import { NextResponse } from 'next/server';
 
+interface Sport {
+  key: string;
+  active: boolean;
+  group: string;
+  description: string;
+  title: string;
+  has_outrights: boolean;
+}
+
+interface Game {
+  id: string;
+  sport_key: string;
+  sport_title: string;
+  commence_time: string;
+  home_team: string;
+  away_team: string;
+  bookmakers: Array<{
+    key: string;
+    title: string;
+    last_update: string;
+    markets: Array<{
+      key: string;
+      last_update: string;
+      outcomes: Array<{
+        name: string;
+        price: number;
+        point?: number;
+      }>;
+    }>;
+  }>;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const eventType = searchParams.get('eventType');
@@ -22,19 +54,19 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Invalid API key' }, { status: 401 });
     }
     
-    const allSports = await sportsResponse.json();
+    const allSports: Sport[] = await sportsResponse.json();
     
-    const activeSports = allSports.filter((sport: any) => 
+    const activeSports = allSports.filter((sport: Sport) => 
       sport.active === true && 
       !sport.key.includes('_future_') &&
       !sport.key.includes('outrights')
     );
 
-    const sportKeys = activeSports.map((sport: any) => sport.key);
+    const sportKeys = activeSports.map((sport: Sport) => sport.key);
     
     console.log(`Fetching ${eventType || 'all'} events for ALL ${sportKeys.length} sports`);
 
-    let allOdds = [];
+    let allOdds: Game[] = [];
     
     for (const sportKey of sportKeys) {
       try {
@@ -43,17 +75,17 @@ export async function GET(request: Request) {
         );
         
         if (response.ok) {
-          let sportOdds = await response.json();
+          let sportOdds: Game[] = await response.json();
           
           if (sportOdds && sportOdds.length > 0) {
             if (eventType === 'live') {
-              sportOdds = sportOdds.filter((game: any) => {
+              sportOdds = sportOdds.filter((game: Game) => {
                 const gameTime = new Date(game.commence_time);
                 const now = new Date();
                 return gameTime <= now;
               });
             } else if (eventType === 'pregame') {
-              sportOdds = sportOdds.filter((game: any) => {
+              sportOdds = sportOdds.filter((game: Game) => {
                 const gameTime = new Date(game.commence_time);
                 const now = new Date();
                 return gameTime > now;
@@ -78,7 +110,8 @@ export async function GET(request: Request) {
     console.log(`✅ Total games fetched: ${allOdds.length}`);
     return NextResponse.json(allOdds);
     
-  } catch (error: any) {
+  } catch (error) {
+    console.error('Failed to fetch odds:', error);
     return NextResponse.json({ error: 'Failed to fetch odds' }, { status: 500 });
   }
 }
