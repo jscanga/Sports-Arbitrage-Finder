@@ -8,8 +8,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "chord site",
-  description: "lock in",
+  title: "Sports Arbitrage Finder",
+  description: "Real gambling is bad",
+  keywords: "James Scanga"
 };
 
 export default function RootLayout({
@@ -20,11 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <TodoProvider>
-          <ScheduleProvider>
             {children}
-          </ScheduleProvider>
-        </TodoProvider>
       </body>
     </html>
   );
