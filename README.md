@@ -4,8 +4,6 @@
 
 This project allows users to connect their **Odds API** key, fetch real-time sports odds, and identify arbitrage opportunities, or situations where placing bets on both outcomes guarantees a profit. The website includes a calculator to determine optimal bet amounts and expected ROI.
 
-> ⚠️ This project was made for solely for fun and education purposes. It does **not require placing actual bets**.
-
 ---
 
 ## Live Demo
@@ -14,13 +12,10 @@ Check out the live version [on Vercel](https://sports-arbitrage-finder.vercel.ap
 ## Screenshots
 
 **Dashboard Overview**  
-![](https://cdn.discordapp.com/attachments/534166713328205844/1428670422056173578/image.png?ex=68f35884&is=68f20704&hm=28ced9c46955e79c620b56ad6f00114114a1ab7d0c577356e38fdbeeb38e3659)
+![](https://i.imgur.com/slEDOV8.png)
 
 **Arbitrage Calculator Modal**  
-![](https://cdn.discordapp.com/attachments/534166713328205844/1428670478196801576/image.png?ex=68f35891&is=68f20711&hm=f08e41fde8cf184b5a4c63eeaaa669b762305af89d6740d5c42bc34cc8737332)
-
-**Filtered Arbitrage Opportunities**  
-![](https://cdn.discordapp.com/attachments/534166713328205844/1428670554272960552/image.png?ex=68f358a3&is=68f20723&hm=f0f1b86607ae51aff1c1a915968e77c0eee2511ddbcb43cb74b867943e283b25)
+![](https://imgur.com/VQNOKmM)
 
 ---
 
