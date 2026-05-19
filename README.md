@@ -15,7 +15,7 @@ Check out the live version [on Vercel](https://sports-arbitrage-finder.vercel.ap
 ![](https://i.imgur.com/slEDOV8.png)
 
 **Arbitrage Calculator Modal**  
-![]([https://imgur.com/VQNOKmM](https://i.imgur.com/VQNOKmM.png)
+![](https://i.imgur.com/VQNOKmM.png)
 
 ---
 
